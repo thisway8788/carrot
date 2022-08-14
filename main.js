@@ -26,8 +26,15 @@ gameBtn.addEventListener("click", () => {
 
 const stopGame = () => {};
 
+const showStopButton = () => {
+  const icon = gameBtn.querySelector(".fa-play");
+  icon.classList.add("fa-stop");
+  icon.classList.remove("fa-play");
+};
+
 const startGame = () => {
   initGame();
+  showStopButton();
 };
 
 function initGame() {
