@@ -1,16 +1,39 @@
 "use strict";
 
 const CARROT_SIZE = 80;
+const CARROT_COUNT = 5;
+const BUG_COUNT = 5;
 const field = document.querySelector(".game__field");
 
 // field의 전체적인 포지션을 알수가있다
 const fieldRect = field.getBoundingClientRect();
+const gameBtn = document.querySelector(".game__button");
+const gameTimer = document.querySelector(".game__timer");
+const gameScore = document.querySelector(".game__score");
+
+let started = false;
+let score = 0;
+let timer = undefined;
+
+gameBtn.addEventListener("click", () => {
+  if (started) {
+    stopGame();
+  } else {
+    startGame();
+  }
+  started = !started;
+});
+
+const stopGame = () => {};
+
+const startGame = () => {
+  initGame();
+};
 
 function initGame() {
-  // making Tofu and Carrot on field
-  console.log(fieldRect);
-  addItem("carrot", 5, "img/carrot.png");
-  addItem("Tofu", 5, "img/bug.png");
+  // making bug and Carrot on field
+  addItem("carrot", CARROT_COUNT, "img/carrot.png");
+  addItem("bug", BUG_COUNT, "img/bug.png");
 }
 
 const addItem = (className, count, imgPath) => {
@@ -33,5 +56,3 @@ const addItem = (className, count, imgPath) => {
 };
 
 const randomNumber = (min, max) => Math.random() * (max - min) + min;
-
-initGame();
