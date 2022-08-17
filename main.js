@@ -20,6 +20,7 @@ let started = false;
 let score = 0;
 let timer = undefined;
 
+field.addEventListener("click", onFieldClick);
 gameBtn.addEventListener("click", () => {
   if (started) {
     stopGame();
@@ -29,9 +30,34 @@ gameBtn.addEventListener("click", () => {
   started = !started;
 });
 
+popUpRefresh.addEventListener("click", () => {
+  startGame();
+  hidePopUp();
+});
+
+const startGame = () => {
+  initGame();
+  showStopButton();
+  showTimerAndScore();
+  startGameTimer();
+};
+
 const stopGame = () => {
   stopGameTimer();
 };
+
+function finishGame(win) {
+  started = false;
+  hideGameButton();
+  if (win) {
+    playSound(winSound);
+  } else {
+    playSound(bugSound);
+  }
+  stopGameTimer();
+  stopSound(bgSound);
+  showPopUpWithText(win ? "YOU WON 🎉" : "YOU LOST 💩");
+}
 
 const showStopButton = () => {
   const icon = gameBtn.querySelector(".fa-play");
@@ -41,13 +67,6 @@ const showStopButton = () => {
 
 const hideGameButton = () => {
   gameBtn.style.visibility = "hidden";
-};
-
-const startGame = () => {
-  initGame();
-  showStopButton();
-  showTimerAndScore();
-  startGameTimer();
 };
 
 const showTimerAndScore = () => {
@@ -61,6 +80,7 @@ const startGameTimer = () => {
   timer = setInterval(() => {
     if (remainingTimeSec <= 0) {
       clearInterval(timer);
+      finishGame(CARROT_COUNT === score);
       return;
     }
     updateTimerText(--remainingTimeSec);
@@ -84,6 +104,7 @@ const showPopUpWithText = (text) => {
   popUp.classList.remove("pop-up--hide");
 };
 
+// LEt THE GAME START
 function initGame() {
   field.innerHTML = "";
   gameScore.innerHTML = CARROT_COUNT;
@@ -91,6 +112,34 @@ function initGame() {
   addItem("carrot", CARROT_COUNT, "img/carrot.png");
   addItem("bug", BUG_COUNT, "img/bug.png");
 }
+
+function onFieldClick(event) {
+  if (!started) {
+    return;
+  }
+  const target = event.target;
+  if (target.matches(".carrot")) {
+    target.remove();
+    score++;
+    updateScoreBoard();
+    if (score === CARROT_COUNT) {
+      finishGame(true);
+    }
+  } else if (target.matches(".bug")) {
+    stopGameTimer();
+    finishGame(false);
+  }
+}
+
+function finishGame(win) {
+  started = false;
+  hideGameButton();
+  showPopUpWithText(win ? "You Won" : "You Lost");
+}
+
+const updateScoreBoard = () => {
+  gameScore.innerText = score;
+};
 
 const addItem = (className, count, imgPath) => {
   const x1 = 0;
